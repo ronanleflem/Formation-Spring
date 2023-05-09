@@ -33,5 +33,30 @@ public class TaskAPI {
         return taskService.saveTask(task);
     }
 
+    @PutMapping("task/update/{id}")
+    public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task task) {
+        Optional<Task> optionalTask = taskService.getTaskById(id);
+        if (optionalTask.isPresent()) {
+            Task existingTask = optionalTask.get();
+            existingTask.setTitle(task.getTitle());
+            existingTask.setDescription(task.getDescription());
+            existingTask.setDueDate(task.getDueDate());
+            existingTask.setCompleted(task.isCompleted());
+            existingTask.setUser(task.getUser());
+            return new ResponseEntity<>(taskService.saveTask(existingTask), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
+    @DeleteMapping("task/delete/{id}")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+        Optional<Task> optionalTask = taskService.getTaskById(id);
+        if (optionalTask.isPresent()) {
+            taskService.deleteTaskById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }

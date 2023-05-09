@@ -1,11 +1,15 @@
 package com.example.demo.api;
 
+import com.example.demo.dto.TaskDTO;
 import com.example.demo.modele.Task;
+import com.example.demo.modele.User;
+import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +20,9 @@ public class TaskAPI {
 
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/task/allTasks")
     public List<Task> getAllTasks() {
@@ -29,7 +36,20 @@ public class TaskAPI {
     }
 
     @PostMapping("/saveTask")
-    public Task saveTask(@RequestBody Task task) {
+    public Task saveTask(@RequestBody TaskDTO taskDTO) {
+        taskDTO.setDueDate(new Date());
+        Task task = new Task();
+        task.setId(taskDTO.getId());
+        task.setDueDate(taskDTO.getDueDate());
+        task.setTitle(taskDTO.getTitle());
+        task.setDescription(taskDTO.getDescription());
+        task.setCompleted(taskDTO.getCompleted());
+        System.out.println("ID USER :"+taskDTO.getIdUser());
+        System.out.println("USER:");
+        System.out.println(userService.getUserById(taskDTO.getIdUser()));
+
+        User user = userService.getUserById(taskDTO.getIdUser()).orElse(null);
+        task.setUser(user);
         return taskService.saveTask(task);
     }
 

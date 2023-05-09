@@ -1,16 +1,18 @@
 package com.example.demo.modele;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Data
 @NoArgsConstructor
 @Table(name = "TASK")
-public class Task {
+public class Task implements Serializable {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,6 +31,7 @@ public class Task {
 
     @ManyToOne( cascade = CascadeType.ALL, fetch = FetchType.LAZY )
     @JoinColumn(name="FORMATION_USER_ID")
+    @JsonBackReference
     private User user;
 
 
